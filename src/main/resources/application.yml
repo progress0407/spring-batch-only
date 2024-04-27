@@ -3,14 +3,20 @@ spring:
   profiles.active: mysql
   batch:
     job:
-      #      name: ${job.name:NONE}
-      name: "helloWorldJob"
+#      name: ${job.name:NONE}
+      name: "chunkSampleJob"
     jdbc:
       initialize-schema: always
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+logging:
+  level:
+    org.springframework:
+      transaction: DEBUG
+      orm.jpa: DEBUG
 
 ---
 spring:

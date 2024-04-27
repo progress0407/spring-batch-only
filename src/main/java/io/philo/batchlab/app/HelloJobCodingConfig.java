@@ -1,4 +1,4 @@
-package io.philo.batchlab;
+package io.philo.batchlab.app;
 
 import java.time.LocalDateTime;
 import org.springframework.batch.core.Job;
