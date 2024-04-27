@@ -1,6 +1,9 @@
 package io.philo.batchlab;
 
+import java.time.LocalDateTime;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -20,7 +23,8 @@ public class HelloJobCodingConfig {
     private final JobRepository jobRepository;
     private final AbstractPlatformTransactionManager transactionManager;
 
-    public HelloJobCodingConfig(JobRepository jobRepository, AbstractPlatformTransactionManager transactionManager) {
+    public HelloJobCodingConfig(JobRepository jobRepository,
+                                AbstractPlatformTransactionManager transactionManager) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
     }
@@ -30,6 +34,18 @@ public class HelloJobCodingConfig {
         System.out.println(">>>> hello world spring batch job !!");
         return new JobBuilder("helloWorldJob", jobRepository)
             .start(helloWorldStep)
+            .listener(new JobExecutionListener() {
+                @Override
+                public void beforeJob(JobExecution jobExecution) {
+                    var param = jobExecution.getJobParameters().getLocalDateTime("requestDate");
+                    System.out.println("Before job, param is: " + param.toString());
+                }
+
+                @Override
+                public void afterJob(JobExecution jobExecution) {
+                    System.out.println("After job");
+                }
+            })
             .build();
     }
 
@@ -45,10 +61,10 @@ public class HelloJobCodingConfig {
     @StepScope
     @Bean
     public Tasklet helloWorldStepTasklet(
-        @Value("#{jobParameters['requestDate']}") String requestDate
+        @Value("#{jobParameters['requestDate']}") LocalDateTime requestDateTime
     ) {
         System.out.println(">>>> hello world spring batch tasklet !!");
-        System.out.println(">>>> input data, requestDate: " + requestDate);
+        System.out.println(">>>> input data, requestDateTime: " + requestDateTime);
 
         return (contribution, chunkContext) -> RepeatStatus.FINISHED;
     }
