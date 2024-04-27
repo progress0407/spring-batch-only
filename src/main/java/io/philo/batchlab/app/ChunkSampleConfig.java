@@ -59,7 +59,7 @@ public class ChunkSampleConfig {
         return new JobBuilder("chunkSampleJob", jobRepository)
             .start(chunkSampleStep())
             .listener(jobExecutionListener())
-            .incrementer(new RunIdIncrementer())
+            .incrementer(new UniqueRunIdIncrementer())
             .build();
     }
 
@@ -75,6 +75,8 @@ public class ChunkSampleConfig {
 
     @Bean
     public JdbcPagingItemReader<Pay> jdbcPagingItemReader() {
+
+        log.info("[READER] START");
 
         return new JdbcPagingItemReaderBuilder<Pay>()
             .pageSize(CHUNK_SIZE)
@@ -105,9 +107,12 @@ public class ChunkSampleConfig {
     }
 
     private ItemWriter<Pay> jdbcPagingItemWriter() {
+
+        log.info("[WRITER] START");
+
         return list -> {
             for (Pay pay: list) {
-                log.info("Current Pay={}", pay);
+                log.info("[Item Writer One thing] Current Pay={}", pay);
             }
         };
     }
