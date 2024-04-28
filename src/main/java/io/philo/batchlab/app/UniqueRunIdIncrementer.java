@@ -15,7 +15,9 @@ public class UniqueRunIdIncrementer extends RunIdIncrementer {
 
     @Override
     public JobParameters getNext(JobParameters parameters) {
-        JobParameters params = (parameters == null) ? new JobParameters() : parameters;
+
+        var params = (parameters == null) ? new JobParameters() : parameters;
+
         return new JobParametersBuilder()
             .addLong(RUN_ID, params.getLong(RUN_ID, 0L) + 1)
             .toJobParameters();

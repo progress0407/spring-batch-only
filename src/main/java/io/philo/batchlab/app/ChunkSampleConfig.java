@@ -58,7 +58,7 @@ public class ChunkSampleConfig {
     public Job chunkSampleJob() {
         return new JobBuilder("chunkSampleJob", jobRepository)
             .start(chunkSampleStep())
-            .listener(jobExecutionListener())
+            .listener(new CustomJobExecutionListener())
             .incrementer(new UniqueRunIdIncrementer())
             .build();
     }
@@ -117,29 +117,7 @@ public class ChunkSampleConfig {
         };
     }
 
-    private static JobExecutionListener jobExecutionListener() {
-        return new JobExecutionListener() {
-            @Override
-            public void beforeJob(JobExecution jobExecution) {
-
-                var jobParameters = jobExecution.getJobParameters();
-                for (Entry<String, JobParameter<?>> entry : jobParameters.getParameters()
-                    .entrySet()) {
-                    String key = entry.getKey();
-                    JobParameter<?> jobParameter = entry.getValue();
-                    System.out.println("job key: " + key + ", value: " + jobParameter.getValue());
-                }
-            }
-
-            @Override
-            public void afterJob(JobExecution jobExecution) {
-                System.out.println("After job");
-            }
-        };
-    }
-
     private static ChunkListener chunkListener() {
-
 
         return new ChunkListener() {
 
